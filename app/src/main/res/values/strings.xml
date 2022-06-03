@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">SeedIntervalMonitoring</string>
+    <string name="connect">Connect</string>
+    <string name="start_scanning">Start scan</string>
+    <string name="cont_record">Contunue recording</string>
+    <string name="start_record">Start recording</string>
+    <string name="stop_record">Stop Recording</string>
+    <string name="share">Share</string>
+    <string name="txt_record">Record</string>
+    <string name="clear_data">Clear data</string>
+    <string name="save_data">Save data</string>
+    <string name="recordings">recordings</string>
+</resources>
