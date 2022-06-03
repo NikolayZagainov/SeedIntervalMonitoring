@@ -59,7 +59,10 @@ class sensorManager(val context:MainActivity) {
     {
         createRecordDir()
         File(Environment.getExternalStorageDirectory(), folder).walk().forEach {
-            add_item(it)
+            if(Files.isRegularFile(it.toPath()))
+            {
+                add_item(it)
+            }
         }
     }
 
