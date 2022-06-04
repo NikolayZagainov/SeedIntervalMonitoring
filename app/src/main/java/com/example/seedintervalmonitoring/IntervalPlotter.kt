@@ -1,7 +1,6 @@
 package com.example.seedintervalmonitoring
 
 import android.os.Handler
-import com.jjoe64.graphview.GraphView
 import com.jjoe64.graphview.series.DataPoint
 import com.jjoe64.graphview.series.LineGraphSeries
 
@@ -27,6 +26,7 @@ class IntervalPlotter(val context: MainActivity) {
                 series.appendData(DataPoint(lastX.toDouble(), yval),
                     true, 300)
                 context.graph?.refreshDrawableState()
+                context.graph?.viewport?.setMaxX(lastX.toDouble())
             }
         })
         mHandler.post(object : Runnable {
@@ -34,6 +34,12 @@ class IntervalPlotter(val context: MainActivity) {
                 context.sensorHandler?.add_measurement(yval)
             }
         })
+    }
+
+    fun clearGraph()
+    {
+        lastX = 0
+        series.resetData(arrayOf(DataPoint(0.0, 0.0)))
     }
 }
 

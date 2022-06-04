@@ -6,9 +6,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Environment
-import android.view.MotionEvent
 import android.view.View
-import android.view.View.OnTouchListener
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -228,6 +226,7 @@ class sensorManager(val context:MainActivity) {
             .filter { Files.isRegularFile(it) }
             .map { it.toFile() }
             .forEach { it.delete() }
+        context.intervalPlotter?.clearGraph()
         fileCleared =true
     }
 
