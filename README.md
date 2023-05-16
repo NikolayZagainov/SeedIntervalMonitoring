@@ -23,5 +23,5 @@ Data can be recorded and saved to the .csv file. The files are stored on the ext
 
 Seed monitorinc sensor device was described in more detail in upcomming scientific article `Rapid plane laser scanning seed monitoring sensor for IoT applications`
 
-An example of the release .apk file is can be found [here](seed_interval_monitoring.apk)
+An example of the release .apk file is can be found [here](seed_interval_monitoring.apk). For android 11 [here](Seed_interval_monotoring_Android_11+.apk)
 
