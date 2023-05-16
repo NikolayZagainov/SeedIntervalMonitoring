@@ -6,6 +6,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Environment
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
@@ -21,8 +22,6 @@ import java.nio.file.Files
 
 
 class sensorManager(val context:MainActivity) {
-    var writePermissionGranted = false
-    var readPermissionGranted = false
     var recordingStarted = false
         set(value) {
             field = value
@@ -40,23 +39,17 @@ class sensorManager(val context:MainActivity) {
         }
 
     init {
-        checkReadPermissions()
-        checkWritePermissions()
-        if(readPermissionGranted and writePermissionGranted)
-        {
-            init_records()
-            init_startButton()
-            init_clearButton()
-            init_saveButton()
-            setupUI(context.root)
-
-        }
+        init_records()
+        init_startButton()
+        init_clearButton()
+        init_saveButton()
+        setupUI(context.root)
     }
 
     fun init_records()
     {
         createRecordDir()
-        File(Environment.getExternalStorageDirectory(), folder).walk().forEach {
+        File(context.filesDir, folder).walk().forEach {
             if(Files.isRegularFile(it.toPath()))
             {
                 add_item(it)
@@ -68,14 +61,14 @@ class sensorManager(val context:MainActivity) {
     {
         createRecordDir()
         context.btn_save.setOnClickListener {
-            val src  = File(Environment.getExternalStorageDirectory(), tempFile)
+            val src  = File(context.filesDir, tempFile)
             val filename = context.te_filename.text.toString()
-            var to = File(Environment.getExternalStorageDirectory(),
+            var to = File(context.filesDir,
                 "${folder}/${filename}.csv")
             var index = 2
             while(to.exists())
             {
-                to = File(Environment.getExternalStorageDirectory(),
+                to = File(context.filesDir,
                     "${folder}/${filename}(${index}).csv")
                 index++
             }
@@ -103,7 +96,7 @@ class sensorManager(val context:MainActivity) {
     fun init_startButton()
     {
         checkTempDIr()
-        val file = File(Environment.getExternalStorageDirectory(), tempFile)
+        val file = File(context.filesDir, tempFile)
         if(!file.exists())
         {
             fileCleared = true
@@ -118,11 +111,11 @@ class sensorManager(val context:MainActivity) {
 
     }
 
-    fun startRecording()
+    private fun startRecording()
     {
         if(fileCleared)
         {
-            val file = File(Environment.getExternalStorageDirectory(), tempFile)
+            val file = File(context.filesDir, tempFile)
             file.writeText("Intervals\n")
             fileCleared = false
         }
@@ -142,8 +135,11 @@ class sensorManager(val context:MainActivity) {
         }
     }
 
-    fun add_item(item: File)
+    
+
+    private fun add_item(item: File)
     {
+//        Log.d("URI_check", item.toURI().toString())
         val view = context.layoutInflater.inflate(R.layout.record, null)
         view.tag = item.name
         view.findViewById<TextView>(R.id.tv_record).setText(item.name)
@@ -173,55 +169,24 @@ class sensorManager(val context:MainActivity) {
     {
         if(recordingStarted)
         {
-            val file = File(Environment.getExternalStorageDirectory(), tempFile)
+            val file = File(context.filesDir, tempFile)
             file.appendText("${value}\n")
         }
     }
 
-    fun checkWritePermissions()
-    {
-        val storage = ContextCompat.checkSelfPermission(context,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        if(storage == PackageManager.PERMISSION_GRANTED)
-        {
-            writePermissionGranted = true
-        }
-        else
-        {
-            ActivityCompat.requestPermissions(context, arrayOf(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ), context.EXTERNAL_STORAGE_WRITE_CODE)
-        }
-    }
 
-    fun checkReadPermissions()
+    private fun checkTempDIr()
     {
-        val storage = ContextCompat.checkSelfPermission(context,
-            Manifest.permission.READ_EXTERNAL_STORAGE)
-        if(storage == PackageManager.PERMISSION_GRANTED)
-        {
-            readPermissionGranted = true
-        }
-        else
-        {
-            ActivityCompat.requestPermissions(context, arrayOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            ), context.EXTERNAL_STORAGE_READ_CODE)
-        }
-    }
-
-    fun checkTempDIr()
-    {
-        val file = File(Environment.getExternalStorageDirectory(), tempDir)
+        val file = File(context.filesDir, tempDir)
         if(!file.exists())
         {
             file.mkdirs()
         }
     }
 
-    fun clearTemp()
+    private fun clearTemp()
     {
-        val directory = File(Environment.getExternalStorageDirectory(), tempDir)
+        val directory = File(context.filesDir, tempDir)
         Files.walk(directory.toPath())
             .filter { Files.isRegularFile(it) }
             .map { it.toFile() }
@@ -230,9 +195,9 @@ class sensorManager(val context:MainActivity) {
         fileCleared =true
     }
 
-    fun createRecordDir()
+    private fun createRecordDir()
     {
-        val file = File(Environment.getExternalStorageDirectory(), folder)
+        val file = File(context.filesDir, folder)
         if(!file.exists())
         {
             file.mkdirs()
@@ -262,7 +227,7 @@ class sensorManager(val context:MainActivity) {
         }
     }
 
-    fun hideSoftKeyboard(activity: Activity) {
+    private fun hideSoftKeyboard(activity: Activity) {
         val inputMethodManager: InputMethodManager = activity.getSystemService(
             Activity.INPUT_METHOD_SERVICE
         ) as InputMethodManager

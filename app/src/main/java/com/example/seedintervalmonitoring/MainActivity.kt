@@ -2,12 +2,15 @@ package com.example.seedintervalmonitoring
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.content.res.Configuration.ORIENTATION_LANDSCAPE
 import android.content.res.Resources
 import android.os.Build
+import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.*
@@ -16,6 +19,7 @@ import android.widget.LinearLayout.VERTICAL
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.jjoe64.graphview.GraphView
+
 
 class MainActivity : AppCompatActivity() {
     // UI
@@ -142,7 +146,10 @@ class MainActivity : AppCompatActivity() {
         val requiredPermissions = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
             listOf(Manifest.permission.ACCESS_FINE_LOCATION)
         } else {
-            listOf(Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN)
+            listOf(
+                Manifest.permission.BLUETOOTH_CONNECT,
+                Manifest.permission.BLUETOOTH_SCAN
+            )
         }
 
         val missingPermissions = requiredPermissions.filter { permission ->
@@ -170,26 +177,6 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     Toast.makeText(applicationContext,
                         "Error! Bluetooth permissions are not granted",
-                        Toast.LENGTH_LONG).show()
-                }
-            }
-            EXTERNAL_STORAGE_WRITE_CODE -> {
-                if (grantResults.none { it != PackageManager.PERMISSION_GRANTED }) {
-                    sensorHandler?.writePermissionGranted = true
-                } else {
-                    sensorHandler?.writePermissionGranted = false
-                    Toast.makeText(applicationContext,
-                        "Error! Write storage permissions are not granted",
-                        Toast.LENGTH_LONG).show()
-                }
-            }
-            EXTERNAL_STORAGE_READ_CODE -> {
-                if (grantResults.none { it != PackageManager.PERMISSION_GRANTED }) {
-                    sensorHandler?.readPermissionGranted = true
-                } else {
-                    sensorHandler?.readPermissionGranted = false
-                    Toast.makeText(applicationContext,
-                        "Error! Read storage permissions are not granted",
                         Toast.LENGTH_LONG).show()
                 }
             }
